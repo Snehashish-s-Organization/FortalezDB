@@ -92,6 +92,14 @@ def write_into_table(values: dict, table_name, db_name, user):
 
 
 def select_all_data_from_table(user, db_name, table_name):
+    """
+    This function resembles the SQL query "SELECT * FROM table"
+    This returns all the data in the table
+    The parameters are:
+    -> user: Name of the user to whom the database belongs to
+    -> db_name: Name of the database
+    -> table_name: Name of the table
+    """
     if os.path.exists(f"./data/{user}/{db_name}/{table_name}.json"):
         with open(f"./data/{user}/{db_name}/{table_name}.json", "r") as file:
             data = json.load(file)
@@ -99,4 +107,34 @@ def select_all_data_from_table(user, db_name, table_name):
         return data
     else:
         raise Exception("The table does not exist")
+
+
+def select_specific_data(user, db_name, table_name, key, key_value):
+    """
+    This function resembles the SQL query "SELECT * FROM table WHERE something = something"
+    The parameters are:
+    -> user: Name of the user to whom the database belongs to
+    -> db_name: Name of the database
+    -> table_name: Name of the table
+    -> key: The Header you are targeting
+    -> key_value: The Value that you are looking for
+
+    """
+    if os.path.exists(f"./data/{user}/{db_name}/{table_name}.json"):
+        with open(f"./data/{user}/{db_name}/{table_name}.json", "r") as file:
+            data = json.load(file)
+            index = None
+            for i in data:
+                if i == key:
+                    list_of_values = data[i]
+                    for j in list_of_values:
+                        if j == key_value:
+                            index = list_of_values.index(j)
+            results = {}
+            for i in data:
+                item = data[i][index]
+                results[i] = item
+
+            print(results)
+
 
