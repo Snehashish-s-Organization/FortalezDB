@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
-import json
 from hashlib import sha256
+from file1 import *
+
 
 api = Flask(__name__)
 
@@ -16,7 +17,23 @@ def api_main_page():
         my_hash = sha256("snehashish090".encode()).hexdigest()
 
         if my_hash == auth:
-            return jsonify(query)
+            if params["mode"] == "specific":
+                user = params["user"]
+                db_name = params["dbname"]
+                table_name = params["tablename"]
+                header = params["header"]
+                value = params["value"]
+
+                select_specific_data(user, db_name, table_name, header, value)
+
+            elif params["mode"] == "all":
+                user = params["user"]
+                db_name = params["dbname"]
+                table_name = params["tablename"]
+
+
+
+
         else:
             return 404
 
