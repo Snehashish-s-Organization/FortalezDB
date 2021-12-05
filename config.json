@@ -1,0 +1,8 @@
+{
+	"Author":"Snehashish Laskar",
+	"Date of Project Start": "3rd December 2021",
+	"files":{
+		"file1.py":"Main source code",
+		"file2.py":"API prototype"
+	}
+}
