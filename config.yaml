@@ -1,0 +1,12 @@
+info:
+	version: '1.0.0 BETA'
+	title: 'Fortalez DB'
+	author: 'Snehashish Laskar'
+	license: 'MIT license'
+
+servers: 
+	- url: 'localhost:5000'
+
+components:
+	main_file: 'file1.py'
+	server_file: 'file1.py'

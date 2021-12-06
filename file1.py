@@ -78,17 +78,17 @@ def write_into_table(values: dict, table_name, db_name, user):
         with open(f"./data/{user}/{db_name}/{table_name}.json", "r") as file:
             table_data = json.load(file)
 
-        if len(values.keys()) == len(table_data.keys()):
-            for i, j in values.items():
-                lis = table_data[i]
-                lis.append(j)
-                table_data[i] = lis
+        # if len(values.keys()) == len(table_data.keys()):
+        for i, j in values.items():
+            lis = table_data[i]
+            lis.append(j)
+            table_data[i] = lis
 
-            with open(f"./data/{user}/{db_name}/{table_name}.json", "w+") as file:
-                json.dump(table_data, file, indent=True)
+        with open(f"./data/{user}/{db_name}/{table_name}.json", "w+") as file:
+            json.dump(table_data, file, indent=True)
 
-        else:
-            raise Exception("The Values do not match the Table's headers")
+        # else:
+        #     raise Exception("The Values do not match the Table's headers")
 
     else:
         raise Exception("The Table or the database don't exist")
@@ -140,6 +140,17 @@ def select_specific_data(user, db_name, table_name, key, key_value):
 
             return results
 
+
+def update_data(user, db_name, table_name, key, key_value):
+
+    if os.path.exists(f"./data/{user}/{db_name}/{table_name}.json"):
+        with open(f"./data/{user}/{db_name}/{table_name}.json", "w+") as file:
+            data = json.load(file)
+
+            if key in data.keys():
+                data[key] = key_value
+                json.dump(data, file, indent=4)
+                
 
 # Creating the API for the DB so that the backend can communicate with the GUI that 
 # Will be used by the End user as the UI to create their database
@@ -239,7 +250,7 @@ def api_main_page():
                 username = params["username"]
                 db_name = params["dbname"]
                 table_name = params["tablename"]
-                values = params["values"]
+                # values = params["values"]
                 actual_values = {}
                 
                 with open("./data/{}/{}/{}.json".format(username, db_name, table_name), "r") as file:
@@ -247,22 +258,37 @@ def api_main_page():
 
                     for i in data.keys():
                         if i in params:
-                            actual_values[i] == params[i]
+                            actual_values[i] = params[i]
                         else:
                             pass 
-                        
 
-                    if len(actual_values.keys()) == len(data.keys()):
-                        write_into_table(
-                            values = actual_values,
-                            db_name = db_name,
-                            table_name = table_name,
-                            user = username
-                            )
-                        return jsonify(data)
+                    write_into_table(
+                        values = actual_values,
+                        db_name = db_name,
+                        table_name = table_name,
+                        user = username
+                        )
+                    with open("./data/{}/{}/{}.json".format(username, db_name, table_name), "r") as file:
+                        data = json.load(file)
 
-                    else:
-                        return "error"
+                        return data
+
+    elif request.method == "PATCH":
+        params = request.args()
+
+        if params['mode'] == 'update_table_value':
+
+            username = params['username']
+            db_name = params['db_name']
+            table_name = params['table_name']
+            table_header = params['table_header']
+            table_values = params['table_values']
+
+            try:
+                update_data(username, db_name, table_name, table_header, table_values)
+
+            except:
+                return 404
 
 if __name__ == "__main__":
     api.run(debug=True)
